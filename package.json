@@ -1,0 +1,19 @@
+{
+  "name": "polobx",
+  "version": "0.0.1",
+  "description": "A state manager for polymer based in mobx",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ivanrod/polobx.git"
+  },
+  "keywords": [
+    "polymer",
+    "mobx"
+  ],
+  "author": "Iván Rodríguez <frivanrodriguez@gmail.com>",
+  "license": "MIT"
+}
