@@ -30,10 +30,10 @@ const createPolobxBehavior = function(stores) {
     created() {
       this._appState = appState;
       this.dispatch = dispatch;
-    }
+    },
 
     attached() {
-      const properties = this.constructor.config.properties;
+      const properties = this.properties;
 
       if (properties) {
         for (let property in properties) {
@@ -42,7 +42,8 @@ const createPolobxBehavior = function(stores) {
           if (statePath && this._appState[statePath.store]) {
             mobx.autorun(() => {
               const store = this._appState[statePath.store].store;
-              this[property] = store[statePath.path];
+              // this[property] = store[statePath.path];
+              this.set(property, store[statePath.path]);
             });
           }
         }
