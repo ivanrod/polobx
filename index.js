@@ -1,4 +1,4 @@
-const MobxMixin = function(stores) {
+const createPolobxMixin = function(stores) {
   let appState = {};
 
   Object.keys(stores).forEach( key => {
