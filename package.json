@@ -4,6 +4,7 @@
   "description": "A state manager for polymer based in mobx",
   "main": "index.js",
   "scripts": {
+    "build": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,10 @@
     "mobx"
   ],
   "author": "Iván Rodríguez <frivanrodriguez@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.22.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  }
 }
