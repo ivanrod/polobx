@@ -1,4 +1,4 @@
-const createPolobxMixin = function(stores) {
+const createPolobxBehavior = function(stores) {
   let appState = {};
 
   Object.keys(stores).forEach( key => {
@@ -25,18 +25,14 @@ const createPolobxMixin = function(stores) {
 
   mobx.useStrict(true);
 
-  return subclass => class extends subclass {
+  return {
 
-    constructor() {
-      super();
-
+    created() {
       this._appState = appState;
       this.dispatch = dispatch;
     }
 
-    connectedCallback() {
-      super.connectedCallback();
-
+    attached() {
       const properties = this.constructor.config.properties;
 
       if (properties) {
