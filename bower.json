@@ -1,0 +1,24 @@
+{
+  "name": "polobx",
+  "description": "A state manager for polymer based in mobx",
+  "main": "polobx.html",
+  "authors": [
+    "Iván Rodríguez <frivanrodriguez@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "polymer",
+    "mobx"
+  ],
+  "homepage": "https://github.com/ivanrod/polobx",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "mobx": "https://npmcdn.com/mobx@3.0.2/bower.zip"
+  }
+}
