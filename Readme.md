@@ -60,7 +60,7 @@ window.PolobxBehavior = createPolobxBehavior(
 
 With your `PolobxBehavior` you can bind your state to properties of your elements.
 
-Use `statePath` field in your property define the store and path you want to bind:
+Use `statePath` field in your property to define the store and path you want to bind to it:
 
 *my-view.html*
 ```html
@@ -93,6 +93,7 @@ Use `statePath` field in your property define the store and path you want to bin
 
 Using `PolobxBehavior` you can use `dispatch()` inside your element to dispatch a defined action of your store:
 
+*my-other-view.html*
 ```html
 <link rel="import" href="my-state.html">
 <dom-module id="my-other-view">
@@ -119,8 +120,9 @@ Using `PolobxBehavior` you can use `dispatch()` inside your element to dispatch 
 
 ## TODO
 
-- Add deep path sync
 - Emit event on state change
+- Improve deep path sync
+- Improve docs
 
 ## License
 

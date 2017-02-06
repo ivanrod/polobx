@@ -1,4 +1,4 @@
-const createPolobxBehavior = function(stores) {
+window.createPolobxBehavior = function(stores) {
   let appState = {};
 
   Object.keys(stores).forEach( key => {
@@ -23,6 +23,24 @@ const createPolobxBehavior = function(stores) {
     console.warn(`No action "${action}" for "${store}" store`);
   };
 
+  function deepPathCheck(path, store) {
+    const pathArray = path.split('.');
+
+    const appStateValue = pathArray.reduce((prev, next) => {
+      if (prev === undefined) {
+        return;
+      }
+
+      const nextPath = prev[next];
+
+      if (nextPath !== undefined) {
+        return nextPath;
+      }
+    }, appState[store].store);
+
+    return appStateValue;
+  };
+
   mobx.useStrict(true);
 
   return {
@@ -42,8 +60,9 @@ const createPolobxBehavior = function(stores) {
           if (statePath && this._appState[statePath.store]) {
             mobx.autorun(() => {
               const store = this._appState[statePath.store].store;
+              const appStateValue = deepPathCheck(statePath.path, statePath.store);
               // this[property] = store[statePath.path];
-              this.set(property, store[statePath.path]);
+              this.set(property, appStateValue);
             });
           }
         }

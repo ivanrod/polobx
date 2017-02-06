@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-var createPolobxBehavior = function createPolobxBehavior(stores) {
+window.createPolobxBehavior = function (stores) {
   var appState = {};
 
   Object.keys(stores).forEach(function (key) {
@@ -26,7 +26,25 @@ var createPolobxBehavior = function createPolobxBehavior(stores) {
       return appState[store];
     }
 
-    console.warn("No action \"" + action + "\" for \"" + store + "\" store");
+    console.warn('No action "' + action + '" for "' + store + '" store');
+  };
+
+  function deepPathCheck(path, store) {
+    var pathArray = path.split('.');
+
+    var appStateValue = pathArray.reduce(function (prev, next) {
+      if (prev === undefined) {
+        return;
+      }
+
+      var nextPath = prev[next];
+
+      if (nextPath !== undefined) {
+        return nextPath;
+      }
+    }, appState[store].store);
+
+    return appStateValue;
   };
 
   mobx.useStrict(true);
@@ -48,8 +66,9 @@ var createPolobxBehavior = function createPolobxBehavior(stores) {
           if (statePath && _this._appState[statePath.store]) {
             mobx.autorun(function () {
               var store = _this._appState[statePath.store].store;
+              var appStateValue = deepPathCheck(statePath.path, statePath.store);
               // this[property] = store[statePath.path];
-              _this.set(property, store[statePath.path]);
+              _this.set(property, appStateValue);
             });
           }
         };
