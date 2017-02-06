@@ -6,6 +6,8 @@ It uses [Monostate Pattern](http://wiki.c2.com/?MonostatePattern) such that any 
 
 Inspired by [tur-nr/polymer-redux](https://github.com/tur-nr/polymer-redux) & [flux](https://facebook.github.io/flux/).
 
+You can see an example app [here](https://github.com/ivanrod/polobx-demo-app).
+
 ## Install
 
 With bower do:
@@ -120,6 +122,7 @@ Using `PolobxBehavior` you can use `dispatch()` inside your element to dispatch 
 
 ## TODO
 
+- Avoid property changes (i.e. with double data binding) with statePath
 - Emit event on state change
 - Improve deep path sync
 - Improve docs
