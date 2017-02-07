@@ -75,6 +75,12 @@ window.createPolobxBehavior = function(stores) {
         }
       }
 
+    },
+
+    getStateProperty(store, path) {
+      const stateProperty = deepPathCheck(path, store);
+
+      return mobx.toJS(stateProperty);
     }
   };
 };
