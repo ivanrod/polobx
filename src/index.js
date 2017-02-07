@@ -1,15 +1,17 @@
 window.createPolobxBehavior = function(stores) {
-  let appState = {};
-
-  Object.keys(stores).forEach( key => {
+  let appState = Object.keys(stores).reduce( (state, key) => {
+    // mobx.observable() applies itself recursively by default,
+    // so all fields inside the store are observable
     const store = mobx.observable(stores[key].store);
     const actions = stores[key].actions;
 
-    appState[key] = {
-      store,
-      actions
+    state[key] = {
+      store: store,
+      actions: actions
     };
-  });
+
+    return state;
+  }, {});
 
   /**
    * Dispach an action to a defined store

@@ -1,17 +1,19 @@
 'use strict';
 
 window.createPolobxBehavior = function (stores) {
-  var appState = {};
-
-  Object.keys(stores).forEach(function (key) {
+  var appState = Object.keys(stores).reduce(function (state, key) {
+    // mobx.observable() applies itself recursively by default,
+    // so all fields inside the store are observable
     var store = mobx.observable(stores[key].store);
     var actions = stores[key].actions;
 
-    appState[key] = {
+    state[key] = {
       store: store,
       actions: actions
     };
-  });
+
+    return state;
+  }, {});
 
   /**
    * Dispach an action to a defined store
