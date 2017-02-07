@@ -120,13 +120,6 @@ Using `PolobxBehavior` you can use `dispatch()` inside your element to dispatch 
 </dom-module>
 ```
 
-## TODO
-
-- Avoid property changes (i.e. with double data binding) with statePath
-- Emit event on state change
-- Improve deep path sync
-- Improve docs
-
 ## License
 
 MIT © [ivanrod](https://github.com/ivanrod).
