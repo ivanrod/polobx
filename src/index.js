@@ -1,4 +1,6 @@
 window.createPolobxBehavior = function(stores) {
+
+  // Create app state with the provided stores
   let appState = Object.keys(stores).reduce( (state, key) => {
     // mobx.observable() applies itself recursively by default,
     // so all fields inside the store are observable
@@ -32,7 +34,13 @@ window.createPolobxBehavior = function(stores) {
     console.warn(`No action "${action}" for "${store}" store`);
   };
 
-  function deepPathCheck(path, store) {
+  /**
+   * Get a deep property value from a store
+   * @param  {string} store
+   * @param  {string} path  Example: path.subpath.subsubpath
+   * @return {any}
+   */
+  function deepPathCheck(store, path) {
     const pathArray = path.split('.');
 
     const appStateValue = pathArray.reduce((prev, next) => {
@@ -63,24 +71,32 @@ window.createPolobxBehavior = function(stores) {
       const properties = this.properties;
 
       if (properties) {
-        for (let property in properties) {
-          const statePath = properties[property].statePath;
+        Object.keys(properties).forEach( property => {
+          const { [property]: { statePath } } = properties;
 
+          // If property has statePath attribute -> subscribe to state mutations
           if (statePath && this._appState[statePath.store]) {
             mobx.autorun(() => {
               const store = this._appState[statePath.store].store;
-              const appStateValue = deepPathCheck(statePath.path, statePath.store);
-              // this[property] = store[statePath.path];
+              const appStateValue = deepPathCheck(statePath.store, statePath.path);
+
+              // Update property with mutated state value
               this.set(property, mobx.toJS(appStateValue));
             });
           }
-        }
+        });
       }
 
     },
 
+    /**
+     * Gets a field/property of the selected store
+     * @param  {string} store
+     * @param  {string} path
+     * @return {any}  field/property value
+     */
     getStateProperty(store, path) {
-      const stateProperty = deepPathCheck(path, store);
+      const stateProperty = deepPathCheck(store, path);
 
       return mobx.toJS(stateProperty);
     }

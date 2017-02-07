@@ -1,6 +1,8 @@
 'use strict';
 
 window.createPolobxBehavior = function (stores) {
+
+  // Create app state with the provided stores
   var appState = Object.keys(stores).reduce(function (state, key) {
     // mobx.observable() applies itself recursively by default,
     // so all fields inside the store are observable
@@ -38,7 +40,13 @@ window.createPolobxBehavior = function (stores) {
     console.warn('No action "' + action + '" for "' + store + '" store');
   };
 
-  function deepPathCheck(path, store) {
+  /**
+   * Get a deep property value from a store
+   * @param  {string} store
+   * @param  {string} path  Example: path.subpath.subsubpath
+   * @return {any}
+   */
+  function deepPathCheck(store, path) {
     var pathArray = path.split('.');
 
     var appStateValue = pathArray.reduce(function (prev, next) {
@@ -69,26 +77,33 @@ window.createPolobxBehavior = function (stores) {
       var properties = this.properties;
 
       if (properties) {
-        var _loop = function _loop(property) {
+        Object.keys(properties).forEach(function (property) {
           var statePath = properties[property].statePath;
+
+          // If property has statePath attribute -> subscribe to state mutations
 
           if (statePath && _this._appState[statePath.store]) {
             mobx.autorun(function () {
               var store = _this._appState[statePath.store].store;
-              var appStateValue = deepPathCheck(statePath.path, statePath.store);
-              // this[property] = store[statePath.path];
+              var appStateValue = deepPathCheck(statePath.store, statePath.path);
+
+              // Update property with mutated state value
               _this.set(property, mobx.toJS(appStateValue));
             });
           }
-        };
-
-        for (var property in properties) {
-          _loop(property);
-        }
+        });
       }
     },
+
+
+    /**
+     * Gets a field/property of the selected store
+     * @param  {string} store
+     * @param  {string} path
+     * @return {any}  field/property value
+     */
     getStateProperty: function getStateProperty(store, path) {
-      var stateProperty = deepPathCheck(path, store);
+      var stateProperty = deepPathCheck(store, path);
 
       return mobx.toJS(stateProperty);
     }
