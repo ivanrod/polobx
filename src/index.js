@@ -11,6 +11,13 @@ window.createPolobxBehavior = function(stores) {
     };
   });
 
+  /**
+   * Dispach an action to a defined store
+   * @param  {string} store   Store name
+   * @param  {string} action  Action name
+   * @param  {any} payload Payload data. Optional
+   * @return {Object}         Store object
+   */
   function dispatch({store, action, payload}) {
     if (appState[store] && appState[store].actions && appState[store].actions[action]) {
       const storeAction = appState[store].actions[action];
@@ -62,7 +69,7 @@ window.createPolobxBehavior = function(stores) {
               const store = this._appState[statePath.store].store;
               const appStateValue = deepPathCheck(statePath.path, statePath.store);
               // this[property] = store[statePath.path];
-              this.set(property, appStateValue);
+              this.set(property, mobx.toJS(appStateValue));
             });
           }
         }
