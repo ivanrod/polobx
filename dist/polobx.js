@@ -2747,6 +2747,7 @@ function appStateReducer(stores) {
 
 /**
  * Dispach an action to a defined store
+ * @param  {[type]} appState
  * @param  {string} store   Store name
  * @param  {string} action  Action name
  * @param  {any} payload Payload data. Optional
@@ -2770,26 +2771,23 @@ function dispatch(appState, _ref) {
 
 /**
  * Get a deep property value from a store
- * @param  {string} store
+ * @param  {Object} appState
+ * @param  {string} storeName
  * @param  {string} path  Example: path.subpath.subsubpath
  * @return {any}
  */
-function deepPathCheck(appState, store, path) {
+function deepPathCheck(appState, storeName, path) {
   var pathArray = path.split('.');
+  var store = appState[storeName].store;
 
-  var appStateValue = pathArray.reduce(function (prev, next) {
-    if (prev === undefined) {
-      return;
+
+  return pathArray.reduce(function (prev, next) {
+    var hasNextPath = prev && prev.hasOwnProperty && prev.hasOwnProperty(next);
+
+    if (hasNextPath) {
+      return prev[next];
     }
-
-    var nextPath = prev[next];
-    // TODO: Use hasOwnProperty() method
-    if (nextPath !== undefined) {
-      return nextPath;
-    }
-  }, appState[store].store);
-
-  return appStateValue;
+  }, store);
 }
 
 var index = function (stores) {
@@ -2797,6 +2795,8 @@ var index = function (stores) {
   // Create app state with the provided stores
   var appState = appStateReducer(stores);
 
+  // Enable strict mode
+  // it allows store changes only throught actions
   mobx_23(true);
 
   return {
@@ -2812,10 +2812,10 @@ var index = function (stores) {
       if (properties) {
         Object.keys(properties).forEach(function (property) {
           var statePath = properties[property].statePath;
-          // TODO: Use hasOwnProperty() method
+
           // If property has statePath attribute -> subscribe to state mutations
 
-          if (statePath && _this._appState[statePath.store]) {
+          if (statePath && _this._appState.hasOwnProperty(statePath.store)) {
             mobx_5(function () {
               var appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
 

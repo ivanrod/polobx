@@ -6,6 +6,8 @@ export default function(stores) {
   // Create app state with the provided stores
   let appState = appStateReducer(stores);
 
+  // Enable strict mode
+  // it allows store changes only throught actions
   useStrict(true);
 
   return {
@@ -21,9 +23,9 @@ export default function(stores) {
       if (properties) {
         Object.keys(properties).forEach( property => {
           const { [property]: { statePath } } = properties;
-          // TODO: Use hasOwnProperty() method
+
           // If property has statePath attribute -> subscribe to state mutations
-          if (statePath && this._appState[statePath.store]) {
+          if (statePath && this._appState.hasOwnProperty(statePath.store)) {
             autorun(() => {
               const appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
 

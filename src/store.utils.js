@@ -20,6 +20,7 @@ export function appStateReducer(stores) {
 
 /**
  * Dispach an action to a defined store
+ * @param  {[type]} appState
  * @param  {string} store   Store name
  * @param  {string} action  Action name
  * @param  {any} payload Payload data. Optional
@@ -39,24 +40,20 @@ export function dispatch(appState, {store, action: actionName, payload}) {
 
 /**
  * Get a deep property value from a store
- * @param  {string} store
+ * @param  {Object} appState
+ * @param  {string} storeName
  * @param  {string} path  Example: path.subpath.subsubpath
  * @return {any}
  */
-export function deepPathCheck(appState, store, path) {
+export function deepPathCheck(appState, storeName, path) {
   const pathArray = path.split('.');
+  const { [storeName]: { store } } = appState;
 
-  const appStateValue = pathArray.reduce((prev, next) => {
-    if (prev === undefined) {
-      return;
+  return pathArray.reduce((prev, next) => {
+    const hasNextPath = prev && prev.hasOwnProperty && prev.hasOwnProperty(next);
+
+    if (hasNextPath) {
+      return prev[next];
     }
-
-    const nextPath = prev[next];
-    // TODO: Use hasOwnProperty() method
-    if (nextPath !== undefined) {
-      return nextPath;
-    }
-  }, appState[store].store);
-
-  return appStateValue;
+  }, store);
 }
