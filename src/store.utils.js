@@ -2,6 +2,11 @@
 
 import { observable, action } from 'mobx';
 
+/**
+ * Create an app state with the provided stores
+ * @param  {Object} stores
+ * @return {Object}       app state
+ */
 export function appStateReducer(stores) {
   return Object.keys(stores).reduce( (state, key) => {
     // mobx.observable() applies itself recursively by default,
@@ -20,7 +25,7 @@ export function appStateReducer(stores) {
 
 /**
  * Dispach an action to a defined store
- * @param  {[type]} appState
+ * @param  {Object} appState
  * @param  {string} store   Store name
  * @param  {string} action  Action name
  * @param  {any} payload Payload data. Optional

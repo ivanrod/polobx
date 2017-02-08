@@ -24,7 +24,8 @@ export default function(stores) {
         Object.keys(properties).forEach( property => {
           const { [property]: { statePath } } = properties;
 
-          // If property has statePath attribute -> subscribe to state mutations
+          // If property has statePath field with a proper store
+          // -> subscribe to state mutations
           if (statePath && this._appState.hasOwnProperty(statePath.store)) {
             autorun(() => {
               const appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
