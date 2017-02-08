@@ -1,3 +1,7 @@
+/*eslint no-console: ["error", { allow: ["warn", "error"] }] */
+
+import mobx from 'mobx';
+
 export default function(stores) {
 
   // Create app state with the provided stores
@@ -32,7 +36,7 @@ export default function(stores) {
     }
 
     console.warn(`No action "${action}" for "${store}" store`);
-  };
+  }
 
   /**
    * Get a deep property value from a store
@@ -41,7 +45,7 @@ export default function(stores) {
    * @return {any}
    */
   function deepPathCheck(store, path) {
-    const pathArray = path.split('.');
+      const pathArray = path.split('.');
 
     const appStateValue = pathArray.reduce((prev, next) => {
       if (prev === undefined) {
@@ -56,7 +60,7 @@ export default function(stores) {
     }, appState[store].store);
 
     return appStateValue;
-  };
+  }
 
   mobx.useStrict(true);
 
@@ -77,7 +81,6 @@ export default function(stores) {
           // If property has statePath attribute -> subscribe to state mutations
           if (statePath && this._appState[statePath.store]) {
             mobx.autorun(() => {
-              const store = this._appState[statePath.store].store;
               const appStateValue = deepPathCheck(statePath.store, statePath.path);
 
               // Update property with mutated state value
@@ -101,4 +104,4 @@ export default function(stores) {
       return mobx.toJS(stateProperty);
     }
   };
-};
+}

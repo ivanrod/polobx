@@ -1,8 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define('createPolobxBehavior', factory) :
-  (global.createPolobxBehavior = factory());
-}(this, (function () { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('mobx')) :
+  typeof define === 'function' && define.amd ? define('createPolobxBehavior', ['mobx'], factory) :
+  (global.createPolobxBehavior = factory(global.mobx));
+}(this, (function (mobx) { 'use strict';
+
+mobx = 'default' in mobx ? mobx['default'] : mobx;
+
+/*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
 var index = function (stores) {
 
@@ -88,7 +92,6 @@ var index = function (stores) {
 
           if (statePath && _this._appState[statePath.store]) {
             mobx.autorun(function () {
-              var store = _this._appState[statePath.store].store;
               var appStateValue = deepPathCheck(statePath.store, statePath.path);
 
               // Update property with mutated state value
