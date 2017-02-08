@@ -2721,15 +2721,19 @@ function toPrimitive(value) {
 }
 });
 
+var mobx_2 = mobx.action;
+var mobx_5 = mobx.autorun;
+var mobx_18 = mobx.observable;
+var mobx_20 = mobx.toJS;
+var mobx_23 = mobx.useStrict;
+
 /*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
-var index = function (stores) {
-
-  // Create app state with the provided stores
-  var appState = Object.keys(stores).reduce(function (state, key) {
+function appStateReducer(stores) {
+  return Object.keys(stores).reduce(function (state, key) {
     // mobx.observable() applies itself recursively by default,
     // so all fields inside the store are observable
-    var store = mobx.observable(stores[key].store);
+    var store = mobx_18(stores[key].store);
     var actions = stores[key].actions;
 
     state[key] = {
@@ -2739,60 +2743,66 @@ var index = function (stores) {
 
     return state;
   }, {});
+}
 
-  /**
-   * Dispach an action to a defined store
-   * @param  {string} store   Store name
-   * @param  {string} action  Action name
-   * @param  {any} payload Payload data. Optional
-   * @return {Object}         Store object
-   */
-  function dispatch(_ref) {
-    var store = _ref.store,
-        action$$1 = _ref.action,
-        payload = _ref.payload;
+/**
+ * Dispach an action to a defined store
+ * @param  {string} store   Store name
+ * @param  {string} action  Action name
+ * @param  {any} payload Payload data. Optional
+ * @return {Object}         Store object
+ */
+function dispatch(appState, _ref) {
+  var store = _ref.store,
+      actionName = _ref.action,
+      payload = _ref.payload;
 
-    if (appState[store] && appState[store].actions && appState[store].actions[action$$1]) {
-      var storeAction = appState[store].actions[action$$1];
+  if (appState[store] && appState[store].actions && appState[store].actions[actionName]) {
+    var storeAction = appState[store].actions[actionName];
 
-      mobx.action(storeAction.bind(appState[store], [payload]))();
+    mobx_2(storeAction.bind(appState[store], [payload]))();
 
-      return appState[store];
+    return appState[store];
+  }
+
+  console.warn('No action "' + mobx_2 + '" for "' + store + '" store');
+}
+
+/**
+ * Get a deep property value from a store
+ * @param  {string} store
+ * @param  {string} path  Example: path.subpath.subsubpath
+ * @return {any}
+ */
+function deepPathCheck(appState, store, path) {
+  var pathArray = path.split('.');
+
+  var appStateValue = pathArray.reduce(function (prev, next) {
+    if (prev === undefined) {
+      return;
     }
 
-    console.warn('No action "' + action$$1 + '" for "' + store + '" store');
-  }
+    var nextPath = prev[next];
+    // TODO: Use hasOwnProperty() method
+    if (nextPath !== undefined) {
+      return nextPath;
+    }
+  }, appState[store].store);
 
-  /**
-   * Get a deep property value from a store
-   * @param  {string} store
-   * @param  {string} path  Example: path.subpath.subsubpath
-   * @return {any}
-   */
-  function deepPathCheck(store, path) {
-    var pathArray = path.split('.');
+  return appStateValue;
+}
 
-    var appStateValue = pathArray.reduce(function (prev, next) {
-      if (prev === undefined) {
-        return;
-      }
+var index = function (stores) {
 
-      var nextPath = prev[next];
-      // TODO: Use hasOwnProperty() method
-      if (nextPath !== undefined) {
-        return nextPath;
-      }
-    }, appState[store].store);
+  // Create app state with the provided stores
+  var appState = appStateReducer(stores);
 
-    return appStateValue;
-  }
-
-  mobx.useStrict(true);
+  mobx_23(true);
 
   return {
     created: function created() {
       this._appState = appState;
-      this.dispatch = dispatch;
+      this.dispatch = dispatch.bind(this, appState);
     },
     attached: function attached() {
       var _this = this;
@@ -2806,11 +2816,11 @@ var index = function (stores) {
           // If property has statePath attribute -> subscribe to state mutations
 
           if (statePath && _this._appState[statePath.store]) {
-            mobx.autorun(function () {
-              var appStateValue = deepPathCheck(statePath.store, statePath.path);
+            mobx_5(function () {
+              var appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
 
               // Update property with mutated state value
-              _this.set(property, mobx.toJS(appStateValue));
+              _this.set(property, mobx_20(appStateValue));
             });
           }
         });
@@ -2825,9 +2835,9 @@ var index = function (stores) {
      * @return {any}  field/property value
      */
     getStateProperty: function getStateProperty(store, path) {
-      var stateProperty = deepPathCheck(store, path);
+      var stateProperty = deepPathCheck(appState, store, path);
 
-      return mobx.toJS(stateProperty);
+      return mobx_20(stateProperty);
     }
   };
 };

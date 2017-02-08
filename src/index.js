@@ -1,74 +1,18 @@
-/*eslint no-console: ["error", { allow: ["warn", "error"] }] */
-
-import mobx from 'mobx';
+import { useStrict, autorun, toJS } from 'mobx';
+import { appStateReducer, deepPathCheck, dispatch } from './store.utils.js';
 
 export default function(stores) {
 
   // Create app state with the provided stores
-  let appState = Object.keys(stores).reduce( (state, key) => {
-    // mobx.observable() applies itself recursively by default,
-    // so all fields inside the store are observable
-    const store = mobx.observable(stores[key].store);
-    const actions = stores[key].actions;
+  let appState = appStateReducer(stores);
 
-    state[key] = {
-      store: store,
-      actions: actions
-    };
-
-    return state;
-  }, {});
-
-  /**
-   * Dispach an action to a defined store
-   * @param  {string} store   Store name
-   * @param  {string} action  Action name
-   * @param  {any} payload Payload data. Optional
-   * @return {Object}         Store object
-   */
-  function dispatch({store, action, payload}) {
-    if (appState[store] && appState[store].actions && appState[store].actions[action]) {
-      const storeAction = appState[store].actions[action];
-
-      mobx.action(storeAction.bind(appState[store], [payload]))();
-
-      return appState[store];
-    }
-
-    console.warn(`No action "${action}" for "${store}" store`);
-  }
-
-  /**
-   * Get a deep property value from a store
-   * @param  {string} store
-   * @param  {string} path  Example: path.subpath.subsubpath
-   * @return {any}
-   */
-  function deepPathCheck(store, path) {
-      const pathArray = path.split('.');
-
-    const appStateValue = pathArray.reduce((prev, next) => {
-      if (prev === undefined) {
-        return;
-      }
-
-      const nextPath = prev[next];
-      // TODO: Use hasOwnProperty() method
-      if (nextPath !== undefined) {
-        return nextPath;
-      }
-    }, appState[store].store);
-
-    return appStateValue;
-  }
-
-  mobx.useStrict(true);
+  useStrict(true);
 
   return {
 
     created() {
       this._appState = appState;
-      this.dispatch = dispatch;
+      this.dispatch = dispatch.bind(this, appState);
     },
 
     attached() {
@@ -80,11 +24,11 @@ export default function(stores) {
           // TODO: Use hasOwnProperty() method
           // If property has statePath attribute -> subscribe to state mutations
           if (statePath && this._appState[statePath.store]) {
-            mobx.autorun(() => {
-              const appStateValue = deepPathCheck(statePath.store, statePath.path);
+            autorun(() => {
+              const appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
 
               // Update property with mutated state value
-              this.set(property, mobx.toJS(appStateValue));
+              this.set(property, toJS(appStateValue));
             });
           }
         });
@@ -99,9 +43,9 @@ export default function(stores) {
      * @return {any}  field/property value
      */
     getStateProperty(store, path) {
-      const stateProperty = deepPathCheck(store, path);
+      const stateProperty = deepPathCheck(appState, store, path);
 
-      return mobx.toJS(stateProperty);
+      return toJS(stateProperty);
     }
   };
 }
