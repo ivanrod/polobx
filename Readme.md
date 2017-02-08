@@ -1,3 +1,5 @@
+![travis CI](https://travis-ci.org/ivanrod/polobx.svg?branch=master "Travis Build")
+
 # Polobx
 
 State manager for Polymer based in [mobx](https://github.com/mobxjs/mobx).
