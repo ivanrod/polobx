@@ -17,8 +17,5 @@
     "bower_components",
     "test",
     "tests"
-  ],
-  "dependencies": {
-    "mobx": "https://npmcdn.com/mobx@3.0.2/bower.zip"
-  }
+  ]
 }

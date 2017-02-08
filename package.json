@@ -25,6 +25,11 @@
     "gulp-babel": "^6.1.2",
     "gulp-better-rollup": "^1.0.2",
     "gulp-rename": "^1.2.2",
-    "rollup-plugin-babel": "^2.7.1"
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^7.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0"
+  },
+  "dependencies": {
+    "mobx": "^3.1.0"
   }
 }
