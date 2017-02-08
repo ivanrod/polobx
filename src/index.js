@@ -1,4 +1,4 @@
-window.createPolobxBehavior = function(stores) {
+export default function(stores) {
 
   // Create app state with the provided stores
   let appState = Object.keys(stores).reduce( (state, key) => {
@@ -49,7 +49,7 @@ window.createPolobxBehavior = function(stores) {
       }
 
       const nextPath = prev[next];
-
+      // TODO: Use hasOwnProperty() method
       if (nextPath !== undefined) {
         return nextPath;
       }
@@ -73,7 +73,7 @@ window.createPolobxBehavior = function(stores) {
       if (properties) {
         Object.keys(properties).forEach( property => {
           const { [property]: { statePath } } = properties;
-
+          // TODO: Use hasOwnProperty() method
           // If property has statePath attribute -> subscribe to state mutations
           if (statePath && this._appState[statePath.store]) {
             mobx.autorun(() => {

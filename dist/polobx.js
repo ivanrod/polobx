@@ -1,6 +1,10 @@
-'use strict';
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define('createPolobxBehavior', factory) :
+  (global.createPolobxBehavior = factory());
+}(this, (function () { 'use strict';
 
-window.createPolobxBehavior = function (stores) {
+var index = function (stores) {
 
   // Create app state with the provided stores
   var appState = Object.keys(stores).reduce(function (state, key) {
@@ -38,7 +42,7 @@ window.createPolobxBehavior = function (stores) {
     }
 
     console.warn('No action "' + action + '" for "' + store + '" store');
-  };
+  }
 
   /**
    * Get a deep property value from a store
@@ -55,14 +59,14 @@ window.createPolobxBehavior = function (stores) {
       }
 
       var nextPath = prev[next];
-
+      // TODO: Use hasOwnProperty() method
       if (nextPath !== undefined) {
         return nextPath;
       }
     }, appState[store].store);
 
     return appStateValue;
-  };
+  }
 
   mobx.useStrict(true);
 
@@ -79,7 +83,7 @@ window.createPolobxBehavior = function (stores) {
       if (properties) {
         Object.keys(properties).forEach(function (property) {
           var statePath = properties[property].statePath;
-
+          // TODO: Use hasOwnProperty() method
           // If property has statePath attribute -> subscribe to state mutations
 
           if (statePath && _this._appState[statePath.store]) {
@@ -109,3 +113,7 @@ window.createPolobxBehavior = function (stores) {
     }
   };
 };
+
+return index;
+
+})));
