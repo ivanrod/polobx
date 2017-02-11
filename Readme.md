@@ -122,6 +122,38 @@ Using `PolobxBehavior` you can use `dispatch()` inside your element to dispatch 
 </dom-module>
 ```
 
+## Polobx API
+
+### Behavior API
+
+#### dispatch({store:string, action:string, payload:any})
+
+Dispatch an action to a defined store.
+
+Returns the action result.
+
+Example:
+
+```javascript
+this.dispatch({
+          store: 'myStore',
+          action: 'changeFoo',
+          payload: 'OtherBar'
+        });
+// -> <Action Result>
+```
+
+#### getStateProperty(store:string, path:string)
+
+Gets a field/property of the selected store.
+
+Example:
+
+```javascript
+this.getStateProperty('myStore', 'foo');
+// -> 'bar'
+```
+
 ## License
 
 MIT © [ivanrod](https://github.com/ivanrod).
