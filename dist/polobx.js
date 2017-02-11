@@ -2729,14 +2729,34 @@ var mobx_23 = mobx.useStrict;
 
 /*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
+/**
+ * Create a mobx actions object
+ * @param  {Object} actions Raw actions functions
+ * @return {Object}         Mobx actions
+ */
+function actionsReducer(actions) {
+  return Object.keys(actions).reduce(function (prevActions, actionName) {
+    prevActions[actionName] = mobx_2.bound(actions[actionName]);
+
+    return prevActions;
+  }, {});
+}
+
+/**
+ * Create an app state with the provided stores
+ * @param  {Object} stores
+ * @return {Object}       app state
+ */
 function appStateReducer(stores) {
   return Object.keys(stores).reduce(function (state, key) {
     // mobx.observable() applies itself recursively by default,
     // so all fields inside the store are observable
     var store = mobx_18(stores[key].store);
-    var actions = stores[key].actions;
+    var actions = actionsReducer(stores[key].actions);
 
     state[key] = {
+      observable: mobx_18,
+      action: mobx_2,
       store: store,
       actions: actions
     };
@@ -2747,7 +2767,7 @@ function appStateReducer(stores) {
 
 /**
  * Dispach an action to a defined store
- * @param  {[type]} appState
+ * @param  {Object} appState
  * @param  {string} store   Store name
  * @param  {string} action  Action name
  * @param  {any} payload Payload data. Optional
@@ -2761,7 +2781,7 @@ function dispatch(appState, _ref) {
   if (appState[store] && appState[store].actions && appState[store].actions[actionName]) {
     var storeAction = appState[store].actions[actionName];
 
-    mobx_2(storeAction.bind(appState[store], [payload]))();
+    storeAction.apply(appState[store], [payload]);
 
     return appState[store];
   }
@@ -2813,7 +2833,8 @@ var index = function (stores) {
         Object.keys(properties).forEach(function (property) {
           var statePath = properties[property].statePath;
 
-          // If property has statePath attribute -> subscribe to state mutations
+          // If property has statePath field with a proper store
+          // -> subscribe to state mutations
 
           if (statePath && _this._appState.hasOwnProperty(statePath.store)) {
             mobx_5(function () {

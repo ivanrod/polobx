@@ -3,6 +3,19 @@
 import { observable, action } from 'mobx';
 
 /**
+ * Create a mobx actions object
+ * @param  {Object} actions Raw actions functions
+ * @return {Object}         Mobx actions
+ */
+function actionsReducer(actions) {
+  return Object.keys(actions).reduce( (prevActions, actionName) => {
+    prevActions[actionName] = action.bound(actions[actionName]);
+
+    return prevActions;
+  }, {});
+}
+
+/**
  * Create an app state with the provided stores
  * @param  {Object} stores
  * @return {Object}       app state
@@ -12,11 +25,13 @@ export function appStateReducer(stores) {
     // mobx.observable() applies itself recursively by default,
     // so all fields inside the store are observable
     const store = observable(stores[key].store);
-    const actions = stores[key].actions;
+    const actions = actionsReducer(stores[key].actions);
 
     state[key] = {
-      store: store,
-      actions: actions
+      observable,
+      action,
+      store,
+      actions
     };
 
     return state;
@@ -35,7 +50,7 @@ export function dispatch(appState, {store, action: actionName, payload}) {
   if (appState[store] && appState[store].actions && appState[store].actions[actionName]) {
     const storeAction = appState[store].actions[actionName];
 
-    action(storeAction.bind(appState[store], [payload]))();
+    storeAction.apply(appState[store], [payload]);
 
     return appState[store];
   }
