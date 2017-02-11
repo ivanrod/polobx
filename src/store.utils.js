@@ -50,9 +50,7 @@ export function dispatch(appState, {store, action: actionName, payload}) {
   if (appState[store] && appState[store].actions && appState[store].actions[actionName]) {
     const storeAction = appState[store].actions[actionName];
 
-    storeAction.apply(appState[store], [payload]);
-
-    return appState[store];
+    return storeAction.apply(appState[store], [payload]);
   }
 
   console.warn(`No action "${action}" for "${store}" store`);
