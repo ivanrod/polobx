@@ -10,6 +10,16 @@ Inspired by [tur-nr/polymer-redux](https://github.com/tur-nr/polymer-redux) & [f
 
 You can see an example app [here](https://github.com/ivanrod/polobx-demo-app).
 
+[See the docs](https://ivanrod.github.io/polobx/).
+
+# Table of Contents
+1. [Install](#install)
+2. [Usage](#usage)
+  - [Binding Properties](#binding-properties)
+  - [Dispatch Actions](#dispatch-actions)
+3. [Polobx API](#polobx-api)
+4. [License](#license)
+
 ## Install
 
 With bower do:
@@ -28,6 +38,7 @@ Create the behavior (with your stores & actions) to have access to the bindings:
 
 <script type="text/javascript">
 var myStore = {
+
   store: {
     foo: 'bar'
   },
@@ -40,9 +51,14 @@ var myStore = {
 };
 
 var myOtherStore = {
+
   store: {
-    counter: 0
+    counter: 0,
+    xxx: {
+      xx: 'x'
+    }
   },
+
   actions: {
     addOne: function() {
       this.store.counter++;
@@ -78,15 +94,27 @@ Use `statePath` field in your property to define the store and path you want to 
   <script>
     Polymer({
       is: 'my-view',
+
       behaviors: [PolobxBehavior],
+
       properties: {
+
         myVar: {
           type: String,
           statePath: {
             store: 'myStore',
             path: 'foo'
           }
+        },
+
+        myOtherVar: {
+          type: String,
+          statePath: {
+            store: 'myOtherStore',
+            path: 'xxx.xx'
+          }
         }
+
       }
     });
   </script>
@@ -109,7 +137,9 @@ Using `PolobxBehavior` you can use `dispatch()` inside your element to dispatch 
   <script>
     Polymer({
       is: 'my-other-view',
+
       behaviors: [PolobxBehavior],
+
       changeOtherViewVar: function() {
         this.dispatch({
           store: 'myStore',
@@ -117,6 +147,7 @@ Using `PolobxBehavior` you can use `dispatch()` inside your element to dispatch 
           payload: 'OtherBar'
         })
       }
+
     });
   </script>
 </dom-module>
