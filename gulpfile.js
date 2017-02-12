@@ -5,6 +5,8 @@ const nodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const rename = require("gulp-rename");
 
+require('web-component-tester').gulp.init(gulp);
+
 gulp.task('default', () =>
     gulp.src('src/index.js')
         .pipe(rollup({

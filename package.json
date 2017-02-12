@@ -10,7 +10,7 @@
     "docs:watch": "npm run docs:prepare && gitbook serve",
     "docs:build": "npm run docs:prepare && rm -rf _book && gitbook build",
     "docs:publish": "npm run docs:build && gh-pages -d _book",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "wct"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,9 @@
     "gulp-rename": "^1.2.2",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^7.0.0",
-    "rollup-plugin-node-resolve": "^2.0.0"
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "web-component-tester": "^5.0.0",
+    "web-component-tester-istanbul": "^0.10.0"
   },
   "dependencies": {
     "mobx": "^3.1.0"
