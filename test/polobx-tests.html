@@ -10,11 +10,34 @@
 <body>
   <my-element id="fixture"></my-element>
   <script>
-    suite('<my-element>', function() {
+    suite('<my-element>', () => {
       const testElement = document.getElementById('fixture');
 
-      test('has foo property', function() {
+      test('has single property', () => {
         assert(testElement.foo === myStore.store.foo);
+      });
+
+      test('has deep property', () => {
+        assert(testElement.deepVar === myStore.store.xxx.xx.x);
+      });
+
+      test('has array property', () => {
+        expect(testElement.colors)
+        .that.is.an('array')
+        .to.be.empty;
+      });
+
+      test('can dispatch actions to modify store', () => {
+        testElement.dispatch({
+          store: 'myStore',
+          action: 'addColor',
+          payload: 'blue'
+        });
+        
+        expect(testElement.colors)
+        .that.is.an('array')
+        .not.to.be.empty;
+        expect(testElement.colors).to.include.members(['blue']);
       });
     });
   </script>
