@@ -34,8 +34,8 @@
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "web-component-tester": "^5.0.0",
-    "web-component-tester-istanbul": "^0.10.0"
+    "web-component-tester": "~4.2.2",
+    "web-component-tester-istanbul": "https://github.com/t2ym/web-component-tester-istanbul/tarball/0.10.1"
   },
   "dependencies": {
     "mobx": "^3.1.0"

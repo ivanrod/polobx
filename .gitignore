@@ -1,5 +1,6 @@
 node_modules
 bower_components
+coverage
 npm-debug.log
 _book
 .DS_Store
