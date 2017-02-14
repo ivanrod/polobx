@@ -1,6 +1,6 @@
 /*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
-import { observable, action } from 'mobx';
+import { observable, extendObservable, action } from 'mobx';
 
 /**
  * Create a mobx actions object
@@ -28,7 +28,7 @@ export function appStateReducer(stores) {
     const actions = actionsReducer(stores[key].actions);
 
     state[key] = {
-      observable,
+      extendObservable,
       action,
       store,
       actions

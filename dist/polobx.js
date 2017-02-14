@@ -2723,6 +2723,7 @@ function toPrimitive(value) {
 
 var mobx_2 = mobx.action;
 var mobx_5 = mobx.autorun;
+var mobx_12 = mobx.extendObservable;
 var mobx_18 = mobx.observable;
 var mobx_20 = mobx.toJS;
 var mobx_23 = mobx.useStrict;
@@ -2755,7 +2756,7 @@ function appStateReducer(stores) {
     var actions = actionsReducer(stores[key].actions);
 
     state[key] = {
-      observable: mobx_18,
+      extendObservable: mobx_12,
       action: mobx_2,
       store: store,
       actions: actions
@@ -2781,9 +2782,7 @@ function dispatch(appState, _ref) {
   if (appState[store] && appState[store].actions && appState[store].actions[actionName]) {
     var storeAction = appState[store].actions[actionName];
 
-    storeAction.apply(appState[store], [payload]);
-
-    return appState[store];
+    return storeAction.apply(appState[store], [payload]);
   }
 
   console.warn('No action "' + mobx_2 + '" for "' + store + '" store');

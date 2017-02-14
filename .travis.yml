@@ -30,5 +30,5 @@ script:
   - npm install -g bower
   - bower install
   - npm run lint
-  - xvfb-run wct
   - npm run build
+  - xvfb-run wct
