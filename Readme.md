@@ -2,7 +2,7 @@
 
 # Polobx
 
-State manager for Polymer based in [mobx](https://github.com/mobxjs/mobx).
+State manager for Polymer based in [MobX](https://github.com/mobxjs/mobx).
 
 It uses [Monostate Pattern](http://wiki.c2.com/?MonostatePattern) such that any instance with the behavior will share the same state.
 
