@@ -6,6 +6,10 @@
   "scripts": {
     "build": "gulp",
     "lint": "eslint ./src/**/*.js",
+    "clean": "rm -r dist/*",
+    "bump:patch": "npm run clean && gulp bump --type=patch",
+    "bump:minor": "npm run clean && gulp bump --type=minor",
+    "bump:major": "npm run clean && gulp bump --type=major",
     "docs:prepare": "gitbook install",
     "docs:watch": "npm run docs:prepare && gitbook serve",
     "docs:build": "npm run docs:prepare && rm -rf _book && gitbook build",
@@ -30,12 +34,16 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-better-rollup": "^1.0.2",
+    "gulp-bump": "^2.6.1",
+    "gulp-git": "^2.0.0",
     "gulp-rename": "^1.2.2",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
+    "run-sequence": "^1.2.2",
     "web-component-tester": "~4.2.2",
-    "web-component-tester-istanbul": "https://github.com/t2ym/web-component-tester-istanbul/tarball/0.10.1"
+    "web-component-tester-istanbul": "https://github.com/t2ym/web-component-tester-istanbul/tarball/0.10.1",
+    "yargs": "^6.6.0"
   },
   "dependencies": {
     "mobx": "^3.1.0"
