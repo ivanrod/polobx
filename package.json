@@ -22,6 +22,8 @@
   },
   "keywords": [
     "polymer",
+    "web-components",
+    "state",
     "mobx"
   ],
   "author": "Iván Rodríguez <frivanrodriguez@gmail.com>",

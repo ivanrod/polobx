@@ -9,6 +9,8 @@
   "license": "MIT",
   "keywords": [
     "polymer",
+    "web-components",
+    "state",
     "mobx"
   ],
   "homepage": "https://github.com/ivanrod/polobx",
