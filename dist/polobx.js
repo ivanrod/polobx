@@ -2743,12 +2743,27 @@ function actionsReducer(actions) {
   }, {});
 }
 
+function getStore(state, storeName) {
+  var _state$storeName = state[storeName],
+      store = _state$storeName.store,
+      actions = _state$storeName.actions;
+
+  var fullStore = {
+    store: mobx_20(store), // toJS to prevent changes in other stores?
+    actions: actions // Remove?
+  };
+
+  return fullStore;
+}
+
 /**
  * Create an app state with the provided stores
  * @param  {Object} stores
  * @return {Object}       app state
  */
 function appStateReducer(stores) {
+  var _this = this;
+
   return Object.keys(stores).reduce(function (state, key) {
     // mobx.observable() applies itself recursively by default,
     // so all fields inside the store are observable
@@ -2756,6 +2771,7 @@ function appStateReducer(stores) {
     var actions = actionsReducer(stores[key].actions);
 
     state[key] = {
+      getStore: getStore.bind(_this, state),
       extendObservable: mobx_12,
       action: mobx_2,
       store: store,

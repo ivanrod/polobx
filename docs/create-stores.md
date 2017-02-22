@@ -55,6 +55,24 @@ If you need to extend your store tree with other objects or arrays you can use `
 ...
 ```
 
+You have access to other stores using `getStore()` method.
+
+```javascript
+...
+  addCountConditionally: function() {
+    var otherStore = getStore('otherStore');
+    if (otherStore.store.foo) {
+      this.store.count++;
+    }
+
+    otherStore.actions.otherStoreAction();
+  },
+
+...
+```
+
+`getStore().store` prevents you to modify the foreign store, you need to do this through a defined action.
+
 ## Async actions
 
 Sometimes you will need to create *async actions* (for example, to modify your store with data provided from a server) then you can use `action` method allow you:

@@ -1,4 +1,5 @@
 ![travis CI](https://travis-ci.org/ivanrod/polobx.svg?branch=master "Travis Build")
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/ivanrod/polobx)
 
 # Polobx
 
@@ -177,6 +178,8 @@ this.dispatch({
 #### getStateProperty(store:string, path:string)
 
 Gets a field/property of the selected store.
+
+Returned value is just a copy of the store property, you only can modify it dispatching an action.
 
 Example:
 

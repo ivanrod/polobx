@@ -1,6 +1,6 @@
 /*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
-import { observable, extendObservable, action } from 'mobx';
+import { observable, extendObservable, action, toJS } from 'mobx';
 
 /**
  * Create a mobx actions object
@@ -13,6 +13,16 @@ function actionsReducer(actions) {
 
     return prevActions;
   }, {});
+}
+
+function getStore(state, storeName) {
+  const { store, actions } = state[storeName];
+  const fullStore = {
+    store: toJS(store), // toJS to prevent changes in other stores?
+    actions // Remove?
+  };
+
+  return fullStore;
 }
 
 /**
@@ -28,6 +38,7 @@ export function appStateReducer(stores) {
     const actions = actionsReducer(stores[key].actions);
 
     state[key] = {
+      getStore: getStore.bind(this, state),
       extendObservable,
       action,
       store,
