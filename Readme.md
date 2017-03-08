@@ -3,9 +3,9 @@
 
 # Polobx
 
-State manager for Polymer based in [MobX](https://github.com/mobxjs/mobx).
+State manager for Polymer based on [MobX](https://github.com/mobxjs/mobx).
 
-It uses [Monostate Pattern](http://wiki.c2.com/?MonostatePattern) such that any instance with the behavior will share the same state.
+Uses the [Monostate Pattern](http://wiki.c2.com/?MonostatePattern) such that any instance with the behavior will share the same state.
 
 Inspired by [tur-nr/polymer-redux](https://github.com/tur-nr/polymer-redux) & [flux](https://facebook.github.io/flux/).
 
@@ -23,7 +23,7 @@ You can see an example app [here](https://github.com/ivanrod/polobx-demo-app).
 
 ## Install
 
-With bower do:
+With bower:
 
 ```bash
 $ bower install --save polobx
@@ -31,7 +31,7 @@ $ bower install --save polobx
 
 ## Usage
 
-Create the behavior (with your stores & actions) to have access to the bindings:
+Use the `createPolobxBehavior` factory method to create the behavior. This will give the behavior access to the bindings:
 
 *my-state.html*
 ```html
@@ -177,9 +177,9 @@ this.dispatch({
 
 #### getStateProperty(store:string, path:string)
 
-Gets a field/property of the selected store.
+Get a field/property of the selected store.
 
-Returned value is just a copy of the store property, you only can modify it dispatching an action.
+Returned value is just a copy of the store property, you can only modify it when dispatching an action.
 
 Example:
 
