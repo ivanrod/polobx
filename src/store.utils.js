@@ -51,6 +51,29 @@ export function addStatePathBinding(appState, element) {
   });
 }
 
+export function addStateObservers(appState, element) {
+  const stateObservers = element.stateObservers;
+
+  stateObservers.forEach(({store: storeName, observer, action, path}) => {
+
+    if (action) {
+      return;
+    }
+
+    if (path) {
+      autorun(() => {
+        const appStateValue = deepPathCheck(appState, storeName, path);
+
+        observer.call(element, appStateValue);
+      });
+      return;
+    }
+
+    autorun(observer.bind(element, appState[storeName].store));
+  });
+
+}
+
 /**
  * Create an app state with the provided stores
  * @param  {Object} stores

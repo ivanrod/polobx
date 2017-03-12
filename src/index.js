@@ -1,5 +1,5 @@
 import { useStrict, toJS } from 'mobx';
-import { appStateReducer, addStatePathBinding, deepPathCheck, dispatch } from './store.utils.js';
+import { appStateReducer, addStatePathBinding, addStateObservers, deepPathCheck, dispatch } from './store.utils.js';
 
 export default function(stores) {
 
@@ -20,6 +20,10 @@ export default function(stores) {
     attached() {
       if (this.properties) {
         addStatePathBinding(appState, this);
+      }
+
+      if (this.stateObservers) {
+        addStateObservers(appState, this);
       }
 
     },
