@@ -1,6 +1,6 @@
 /*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
-import { observable, extendObservable, action, toJS } from 'mobx';
+import { autorun, observable, extendObservable, action, toJS } from 'mobx';
 
 /**
  * Create a mobx actions object
@@ -23,6 +23,51 @@ function getStore(state, storeName) {
   };
 
   return fullStore;
+}
+
+/**
+ * Iterates through a polymer element properties to find statePath atribute
+ * subscribing it to state mutations
+ * @param {Object} appState
+ * @param {Object} element
+ * @param {Object} properties
+ */
+export function addStatePathBinding(appState, element) {
+  const properties = element.properties;
+
+  return Object.keys(properties).forEach( property => {
+    const { [property]: { statePath } } = properties;
+
+    // If property has statePath field with a proper store
+    // -> subscribe to state mutations
+    if (statePath && element._appState.hasOwnProperty(statePath.store)) {
+      autorun(() => {
+        const appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
+
+        // Update property with mutated state value
+        element.set(property, toJS(appStateValue));
+      });
+    }
+  });
+}
+
+export function addStateObservers(appState, element) {
+  const stateObservers = element.stateObservers;
+
+  stateObservers.forEach(({store: storeName, observer, path}) => {
+
+    if (path) {
+      autorun(() => {
+        const appStateValue = deepPathCheck(appState, storeName, path);
+
+        observer.call(element, appStateValue);
+      });
+      return;
+    }
+
+    autorun(observer.bind(element, appState[storeName].store));
+  });
+
 }
 
 /**

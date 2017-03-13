@@ -43,6 +43,63 @@ Use `statePath` field in your property to define the store and path you want to 
 </dom-module>
 ```
 
+## State Observers
+
+You can listen to state changes in your component using state obserbers too.
+Define a `stateObservers` field in your component with a list of observers of your state:
+
+```html
+<link rel="import" href="my-state.html">
+<dom-module id="my-view">
+  <template>
+    ...
+    <p>My colors counter: [[myColorsCounter]]</p>
+    <p>My foo: [[myFoo]]</p>
+    ...
+  </template>
+  <script>
+    Polymer({
+      is: 'my-view',
+
+      behaviors: [PolobxBehavior],
+
+      stateObservers: [
+        // Store path observer
+        {
+          store: 'myStore',
+          path: 'colors',
+          observer: function(colors) {
+            if (colors.length > 4) {
+              this.set('myColorsCounter', 'We have more than 4.')
+            }
+          }
+        },
+
+        // Store observer
+        {
+          store: 'myStore',
+          observer: function(state) {
+
+            if (state.foo === 'bar') {
+              this.set('myFoo', 'My foo is actually bar.')
+            }
+          }
+        }
+
+      ],
+
+      properties: {
+
+        myColorsCounter: String,
+
+        myFoo: String
+
+      }
+    });
+  </script>
+</dom-module>
+```
+
 ## Dispatching actions
 
 Using `PolobxBehavior` you can use `dispatch()` inside your element to dispatch a defined action of your store:

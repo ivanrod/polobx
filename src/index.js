@@ -1,10 +1,10 @@
-import { useStrict, autorun, toJS } from 'mobx';
-import { appStateReducer, deepPathCheck, dispatch } from './store.utils.js';
+import { useStrict, toJS } from 'mobx';
+import { appStateReducer, addStatePathBinding, addStateObservers, deepPathCheck, dispatch } from './store.utils.js';
 
 export default function(stores) {
 
   // Create app state with the provided stores
-  let appState = appStateReducer(stores);
+  const appState = appStateReducer(stores);
 
   // Enable strict mode
   // it allows store changes only throught actions
@@ -18,23 +18,12 @@ export default function(stores) {
     },
 
     attached() {
-      const properties = this.properties;
+      if (this.properties) {
+        addStatePathBinding(appState, this);
+      }
 
-      if (properties) {
-        Object.keys(properties).forEach( property => {
-          const { [property]: { statePath } } = properties;
-
-          // If property has statePath field with a proper store
-          // -> subscribe to state mutations
-          if (statePath && this._appState.hasOwnProperty(statePath.store)) {
-            autorun(() => {
-              const appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
-
-              // Update property with mutated state value
-              this.set(property, toJS(appStateValue));
-            });
-          }
-        });
+      if (this.stateObservers) {
+        addStateObservers(appState, this);
       }
 
     },
