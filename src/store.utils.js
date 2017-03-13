@@ -54,11 +54,7 @@ export function addStatePathBinding(appState, element) {
 export function addStateObservers(appState, element) {
   const stateObservers = element.stateObservers;
 
-  stateObservers.forEach(({store: storeName, observer, action, path}) => {
-
-    if (action) {
-      return;
-    }
+  stateObservers.forEach(({store: storeName, observer, path}) => {
 
     if (path) {
       autorun(() => {

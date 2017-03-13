@@ -17,6 +17,7 @@ You can see an example app [here](https://github.com/ivanrod/polobx-demo-app).
 1. [Install](#install)
 2. [Usage](#usage)
   - [Binding Properties](#binding-properties)
+  - [State observers](#state-observers)
   - [Dispatch Actions](#dispatch-actions)
 3. [Polobx API](#polobx-api)
 4. [License](#license)
@@ -115,6 +116,62 @@ Use `statePath` field in your property to define the store and path you want to 
             path: 'xxx.xx'
           }
         }
+
+      }
+    });
+  </script>
+</dom-module>
+```
+
+### State Observers
+
+Define a `stateObservers` field in your component with a list of observers of your state:
+
+```html
+<link rel="import" href="my-state.html">
+<dom-module id="my-view">
+  <template>
+    ...
+    <p>My colors counter: [[myColorsCounter]]</p>
+    <p>My foo: [[myFoo]]</p>
+    ...
+  </template>
+  <script>
+    Polymer({
+      is: 'my-view',
+
+      behaviors: [PolobxBehavior],
+
+      stateObservers: [
+        // Store path observer
+        {
+          store: 'myStore',
+          path: 'colors',
+          observer: function(colors) {
+            if (colors.length > 4) {
+              this.set('myColorsCounter', 'We have more than 4.')
+            }
+          }
+        },
+
+        // Store observer
+        {
+          store: 'myStore',
+          observer: function(state) {
+
+            if (state.foo === 'bar') {
+              this.set('myFoo', 'My foo is actually bar.')
+            }
+          }
+        }
+
+      ],
+
+      properties: {
+
+        myColorsCounter: String,
+
+        myFoo: String
 
       }
     });
