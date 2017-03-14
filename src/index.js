@@ -14,6 +14,7 @@ export default function(stores) {
 
     created() {
       this._appState = appState;
+      this._disposers = [];
       this.dispatch = dispatch.bind(this, appState);
     },
 
@@ -26,6 +27,10 @@ export default function(stores) {
         addStateObservers(appState, this);
       }
 
+    },
+
+    detached() {
+      this._disposers.forEach(disposer => disposer());
     },
 
     /**

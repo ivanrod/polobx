@@ -41,12 +41,14 @@ export function addStatePathBinding(appState, element) {
     // If property has statePath field with a proper store
     // -> subscribe to state mutations
     if (statePath && element._appState.hasOwnProperty(statePath.store)) {
-      autorun(() => {
+      const disposer = autorun(() => {
         const appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
 
         // Update property with mutated state value
         element.set(property, toJS(appStateValue));
       });
+
+      element._disposers.push(disposer);
     }
   });
 }
@@ -55,17 +57,19 @@ export function addStateObservers(appState, element) {
   const stateObservers = element.stateObservers;
 
   stateObservers.forEach(({store: storeName, observer, path}) => {
+    let disposer;
 
     if (path) {
-      autorun(() => {
+      disposer = autorun(() => {
         const appStateValue = deepPathCheck(appState, storeName, path);
 
         observer.call(element, appStateValue);
       });
-      return;
+    } else {
+      disposer = autorun(observer.bind(element, appState[storeName].store));
     }
 
-    autorun(observer.bind(element, appState[storeName].store));
+    element._disposers.push(disposer);
   });
 
 }
