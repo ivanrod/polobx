@@ -20,11 +20,13 @@ export default function(stores) {
 
     attached() {
       if (this.properties) {
-        addStatePathBinding(appState, this);
+        const stateBindingsDisposers = addStatePathBinding(appState, this);
+        this._disposers = this._disposers.concat(stateBindingsDisposers);
       }
 
       if (this.stateObservers) {
-        addStateObservers(appState, this);
+        const stateObserversDisposers = addStateObservers(appState, this);
+        this._disposers = this._disposers.concat(stateObserversDisposers);
       }
 
     },

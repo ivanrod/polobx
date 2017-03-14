@@ -30,12 +30,11 @@ function getStore(state, storeName) {
  * subscribing it to state mutations
  * @param {Object} appState
  * @param {Object} element
- * @param {Object} properties
  */
 export function addStatePathBinding(appState, element) {
   const properties = element.properties;
-
-  return Object.keys(properties).forEach( property => {
+  // TODO: Remove side effects
+  return Object.keys(properties).reduce( (disposers, property) => {
     const { [property]: { statePath } } = properties;
 
     // If property has statePath field with a proper store
@@ -48,15 +47,21 @@ export function addStatePathBinding(appState, element) {
         element.set(property, toJS(appStateValue));
       });
 
-      element._disposers.push(disposer);
+      disposers.push(disposer);
     }
-  });
+    return disposers;
+  }, []);
 }
 
+/**
+ * Adds state observers specified in a component
+ * @param {Object} appState
+ * @param {Object} element
+ */
 export function addStateObservers(appState, element) {
   const stateObservers = element.stateObservers;
 
-  stateObservers.forEach(({store: storeName, observer, path}) => {
+  return stateObservers.reduce((disposers, {store: storeName, observer, path}) => {
     let disposer;
 
     if (path) {
@@ -69,8 +74,10 @@ export function addStateObservers(appState, element) {
       disposer = autorun(observer.bind(element, appState[storeName].store));
     }
 
-    element._disposers.push(disposer);
-  });
+    disposers.push(disposer);
+
+    return disposers;
+  }, []);
 
 }
 
