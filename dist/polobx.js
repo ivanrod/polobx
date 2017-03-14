@@ -2757,6 +2757,55 @@ function getStore(state, storeName) {
 }
 
 /**
+ * Iterates through a polymer element properties to find statePath atribute
+ * subscribing it to state mutations
+ * @param {Object} appState
+ * @param {Object} element
+ * @param {Object} properties
+ */
+function addStatePathBinding(appState, element) {
+  var properties = element.properties;
+
+  return Object.keys(properties).forEach(function (property) {
+    var statePath = properties[property].statePath;
+
+    // If property has statePath field with a proper store
+    // -> subscribe to state mutations
+
+    if (statePath && element._appState.hasOwnProperty(statePath.store)) {
+      mobx_5(function () {
+        var appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
+
+        // Update property with mutated state value
+        element.set(property, mobx_20(appStateValue));
+      });
+    }
+  });
+}
+
+function addStateObservers(appState, element) {
+  var stateObservers = element.stateObservers;
+
+  stateObservers.forEach(function (_ref) {
+    var storeName = _ref.store,
+        observer = _ref.observer,
+        path = _ref.path;
+
+
+    if (path) {
+      mobx_5(function () {
+        var appStateValue = deepPathCheck(appState, storeName, path);
+
+        observer.call(element, appStateValue);
+      });
+      return;
+    }
+
+    mobx_5(observer.bind(element, appState[storeName].store));
+  });
+}
+
+/**
  * Create an app state with the provided stores
  * @param  {Object} stores
  * @return {Object}       app state
@@ -2790,10 +2839,10 @@ function appStateReducer(stores) {
  * @param  {any} payload Payload data. Optional
  * @return {Object}         Store object
  */
-function dispatch(appState, _ref) {
-  var store = _ref.store,
-      actionName = _ref.action,
-      payload = _ref.payload;
+function dispatch(appState, _ref2) {
+  var store = _ref2.store,
+      actionName = _ref2.action,
+      payload = _ref2.payload;
 
   if (appState[store] && appState[store].actions && appState[store].actions[actionName]) {
     var storeAction = appState[store].actions[actionName];
@@ -2840,26 +2889,12 @@ var index = function (stores) {
       this.dispatch = dispatch.bind(this, appState);
     },
     attached: function attached() {
-      var _this = this;
+      if (this.properties) {
+        addStatePathBinding(appState, this);
+      }
 
-      var properties = this.properties;
-
-      if (properties) {
-        Object.keys(properties).forEach(function (property) {
-          var statePath = properties[property].statePath;
-
-          // If property has statePath field with a proper store
-          // -> subscribe to state mutations
-
-          if (statePath && _this._appState.hasOwnProperty(statePath.store)) {
-            mobx_5(function () {
-              var appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
-
-              // Update property with mutated state value
-              _this.set(property, mobx_20(appStateValue));
-            });
-          }
-        });
+      if (this.stateObservers) {
+        addStateObservers(appState, this);
       }
     },
 

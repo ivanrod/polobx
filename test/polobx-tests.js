@@ -43,7 +43,30 @@ describe('<my-element>', () => {
       });
 
       expect( console.warn.calledOnce ).to.be.true;
-    })
+    });
+
+  });
+
+  describe('has state observers', () => {
+
+    it('that listen to store changes', () => {
+      assert(this.testElement.myColorsCounter !== 'hasColors');
+      testElement.dispatch({
+        store: 'myStore',
+        action: 'addColor',
+        payload: 'red'
+      });
+      assert(this.testElement.myColorsCounter === 'hasColors');
+
+      assert(this.testElement.myFoo !== 'newValue');
+      testElement.dispatch({
+        store: 'myStore',
+        action: 'changeFoo',
+        payload: 'other'
+      });
+      assert(this.testElement.myFoo === 'newValue');
+
+    });
 
   });
 

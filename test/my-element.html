@@ -15,6 +15,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
     <div class="card">
       <div>
+        <p>My colors counter: [[myColorsCounter]]</p>
+        <p>My foo: [[myFoo]]</p>
         <p>myStore.counter: [[counter]]</p>
         <p>myStore.foo: [[foo]]</p>
         <p>myStore.xxx.xx.x: [[deepVar]]</p>
@@ -37,6 +39,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'my-element',
 
       behaviors: [PolobxBehavior],
+
+      stateObservers: [
+        // Store path observer
+        {
+          store: 'myStore',
+          path: 'colors',
+          observer: function(colors) {
+            if (colors.length > 1) {
+              this.set('myColorsCounter', 'hasColors')
+            }
+          }
+        },
+
+        // Store observer
+        {
+          store: 'myStore',
+          observer: function(state) {
+
+            if (state.foo === 'other') {
+              this.set('myFoo', 'newValue')
+            }
+          }
+        }
+      ],
 
       properties: {
         foo: {
@@ -69,7 +95,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             store: 'myStore',
             path: 'colors'
           }
-        }
+        },
+
+        myFoo: String,
+        myColorsCounter: String
       }
     });
   </script>
