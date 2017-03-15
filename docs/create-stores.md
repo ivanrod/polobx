@@ -2,6 +2,8 @@
 
 A store it's an object where you define a model and the actions to modify it.
 
+![Store](images/store.png)
+
 Polobx will transform your model into [MobX observables](https://mobx.js.org/refguide/observable.html) and your actions to [MobX actions](https://mobx.js.org/refguide/action.html) so you can use them to manage your app state.
 
 Let's see an example:
