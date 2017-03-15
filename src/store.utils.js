@@ -16,9 +16,9 @@ function actionsReducer(actions) {
 }
 
 function getStore(state, storeName) {
-  const { store, actions } = state[storeName];
+  const { model, actions } = state[storeName];
   const fullStore = {
-    store: toJS(store), // toJS to prevent changes in other stores?
+    model: toJS(model), // toJS to prevent changes in other stores?
     actions // Remove?
   };
 
@@ -71,7 +71,7 @@ export function addStateObservers(appState, element) {
         observer.call(element, appStateValue);
       });
     } else {
-      disposer = autorun(observer.bind(element, appState[storeName].store));
+      disposer = autorun(observer.bind(element, appState[storeName].model));
     }
 
     disposers.push(disposer);
@@ -89,15 +89,15 @@ export function addStateObservers(appState, element) {
 export function appStateReducer(stores) {
   return Object.keys(stores).reduce( (state, key) => {
     // mobx.observable() applies itself recursively by default,
-    // so all fields inside the store are observable
-    const store = observable(stores[key].store);
+    // so all fields inside the model are observable
+    const model = observable(stores[key].model);
     const actions = actionsReducer(stores[key].actions);
 
     state[key] = {
       getStore: getStore.bind(this, state),
       extendObservable,
       action,
-      store,
+      model,
       actions
     };
 
@@ -132,7 +132,7 @@ export function dispatch(appState, {store, action: actionName, payload}) {
  */
 export function deepPathCheck(appState, storeName, path) {
   const pathArray = path.split('.');
-  const { [storeName]: { store } } = appState;
+  const { [storeName]: { model } } = appState;
 
   return pathArray.reduce((prev, next) => {
     const hasNextPath = prev && prev.hasOwnProperty && prev.hasOwnProperty(next);
@@ -140,5 +140,5 @@ export function deepPathCheck(appState, storeName, path) {
     if (hasNextPath) {
       return prev[next];
     }
-  }, store);
+  }, model);
 }

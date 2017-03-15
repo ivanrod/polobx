@@ -1,14 +1,14 @@
 ## Stores
 
-A store it's an object where you define the store itself and the actions to modify it.
+A store it's an object where you define a model and the actions to modify it.
 
-Polobx will transform your store into [MobX observables](https://mobx.js.org/refguide/observable.html) and your actions to [MobX actions](https://mobx.js.org/refguide/action.html) so you can use them to manage your app state.
+Polobx will transform your model into [MobX observables](https://mobx.js.org/refguide/observable.html) and your actions to [MobX actions](https://mobx.js.org/refguide/action.html) so you can use them to manage your app state.
 
 Let's see an example:
 
 ```javascript
 var myStore = {
-  store: {
+  model: {
     users: {},
     otherData: '',
     counter: 0,
@@ -21,26 +21,26 @@ var myStore = {
      * adding 1 to the current state value
      */
     addCount: function() {
-      this.store.counter++;
+      this.model.counter++;
     },
 
     /**
      * This one modifies foo property with a new value
      */
     modifyFoo: function(newValue) {
-      this.store.foo = 'otherBar';
+      this.model.foo = 'otherBar';
     }
   }
 };
 ```
 
-MobX methods [`action`](https://mobx.js.org/refguide/action.html) & [`extendObservable`](https://mobx.js.org/refguide/extend-observable.html) are exposed in the store context so you can use them to create async actions or modify your store.
+MobX methods [`action`](https://mobx.js.org/refguide/action.html) & [`extendObservable`](https://mobx.js.org/refguide/extend-observable.html) are exposed in the store context so you can use them to create async actions or modify your state.
 
 ## Actions
 
-Polobx uses [`useStrict`](https://github.com/mobxjs/mobx/blob/gh-pages/docs/refguide/api.md#usestrict) method from MobX so you can only modify your store through actions.
+Polobx uses [`useStrict`](https://github.com/mobxjs/mobx/blob/gh-pages/docs/refguide/api.md#usestrict) method from MobX so you can only modify your state through actions.
 
-If you need to extend your store tree with other objects or arrays you can use `extendObservable` method to make them observables:
+If you need to extend your model tree with other objects or arrays you can use `extendObservable` method to make them observables:
 
 ```javascript
 ...
@@ -50,7 +50,7 @@ If you need to extend your store tree with other objects or arrays you can use `
       surname: 'Rodriguez'
     };
 
-    this.extendObservable(this.state.users, user);
+    this.extendObservable(this.model.users, user);
   }
 ...
 ```
@@ -61,8 +61,8 @@ You have access to other stores using `getStore()` method.
 ...
   addCountConditionally: function() {
     var otherStore = getStore('otherStore');
-    if (otherStore.store.foo) {
-      this.store.count++;
+    if (otherStore.model.foo) {
+      this.model.count++;
     }
 
     otherStore.actions.otherStoreAction();
@@ -86,7 +86,7 @@ Sometimes you will need to create *async actions* (for example, to modify your s
     .then(parseJson) // parse json object method
     .then(this.action(function(response) {
       var otherData = response.otherData;
-      self.store.otherData = otherData;
+      self.model.otherData = otherData;
     }));
   }
 ...
@@ -100,7 +100,7 @@ You can do the same using other store action, in this case, you should use `bind
 ...
   modifyOtherData: function(response) {
     var otherData = response.otherData;
-    this.store.otherData = otherData;
+    this.model.otherData = otherData;
   },
 
   fetchFromServer: function() {    

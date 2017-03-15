@@ -41,20 +41,20 @@ Use the `createPolobxBehavior` factory method to create the behavior. This will 
 <script type="text/javascript">
 var myStore = {
 
-  store: {
+  model: {
     foo: 'bar'
   },
 
   actions: {
     changeFoo: function(newFoo) {
-      this.store.foo = newFoo;
+      this.model.foo = newFoo;
     }
   }
 };
 
 var myOtherStore = {
 
-  store: {
+  model: {
     counter: 0,
     xxx: {
       xx: 'x'
@@ -63,7 +63,7 @@ var myOtherStore = {
 
   actions: {
     addOne: function() {
-      this.store.counter++;
+      this.model.counter++;
     }
   }
 };
@@ -243,6 +243,14 @@ Example:
 ```javascript
 this.getStateProperty('myStore', 'foo');
 // -> 'bar'
+```
+
+## Test
+
+Run:
+
+```bash
+npm run test
 ```
 
 ## License

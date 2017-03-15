@@ -2,7 +2,7 @@
 
 With your `PolobxBehavior` you can bind your state to your elements properties.
 
-Use `statePath` field in your property to define the store and path you want to bind to it:
+Use `statePath` field in your property to define the store and model path you want to bind to it:
 
 *my-view.html*
 ```html
@@ -45,7 +45,7 @@ Use `statePath` field in your property to define the store and path you want to 
 
 ## State Observers
 
-You can listen to state changes in your component using state obserbers too.
+You can listen to state changes in your component using state observers too.
 Define a `stateObservers` field in your component with a list of observers of your state:
 
 ```html

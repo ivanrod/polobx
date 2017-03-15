@@ -1,5 +1,5 @@
 const myStore =   {
-  store: {
+  model: {
     counter: 0,
     colors: [],
     foo: 'bar',
@@ -12,15 +12,15 @@ const myStore =   {
 
   actions: {
     changeFoo: function(newFoo) {
-      this.store.foo = newFoo;
+      this.model.foo = newFoo;
     },
 
     addOne: function() {
-      this.store.counter++;
+      this.model.counter++;
     },
 
     addColor: function(color) {
-      this.store.colors.push(color);
+      this.model.colors.push(color);
     }
 
   }
@@ -28,6 +28,6 @@ const myStore =   {
 
 const PolobxBehavior = createPolobxBehavior(
   {
-    myStore: myStore
+    myStore
   }
 );

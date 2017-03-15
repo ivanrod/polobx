@@ -2745,11 +2745,11 @@ function actionsReducer(actions) {
 
 function getStore(state, storeName) {
   var _state$storeName = state[storeName],
-      store = _state$storeName.store,
+      model = _state$storeName.model,
       actions = _state$storeName.actions;
 
   var fullStore = {
-    store: mobx_20(store), // toJS to prevent changes in other stores?
+    model: mobx_20(model), // toJS to prevent changes in other stores?
     actions: actions // Remove?
   };
 
@@ -2761,48 +2761,59 @@ function getStore(state, storeName) {
  * subscribing it to state mutations
  * @param {Object} appState
  * @param {Object} element
- * @param {Object} properties
  */
 function addStatePathBinding(appState, element) {
   var properties = element.properties;
-
-  return Object.keys(properties).forEach(function (property) {
+  // TODO: Remove side effects
+  return Object.keys(properties).reduce(function (disposers, property) {
     var statePath = properties[property].statePath;
 
     // If property has statePath field with a proper store
     // -> subscribe to state mutations
 
     if (statePath && element._appState.hasOwnProperty(statePath.store)) {
-      mobx_5(function () {
+      var disposer = mobx_5(function () {
         var appStateValue = deepPathCheck(appState, statePath.store, statePath.path);
 
         // Update property with mutated state value
         element.set(property, mobx_20(appStateValue));
       });
+
+      disposers.push(disposer);
     }
-  });
+    return disposers;
+  }, []);
 }
 
+/**
+ * Adds state observers specified in a component
+ * @param {Object} appState
+ * @param {Object} element
+ */
 function addStateObservers(appState, element) {
   var stateObservers = element.stateObservers;
 
-  stateObservers.forEach(function (_ref) {
+  return stateObservers.reduce(function (disposers, _ref) {
     var storeName = _ref.store,
         observer = _ref.observer,
         path = _ref.path;
 
+    var disposer = void 0;
 
     if (path) {
-      mobx_5(function () {
+      disposer = mobx_5(function () {
         var appStateValue = deepPathCheck(appState, storeName, path);
 
         observer.call(element, appStateValue);
       });
-      return;
+    } else {
+      disposer = mobx_5(observer.bind(element, appState[storeName].model));
     }
 
-    mobx_5(observer.bind(element, appState[storeName].store));
-  });
+    disposers.push(disposer);
+
+    return disposers;
+  }, []);
 }
 
 /**
@@ -2815,15 +2826,15 @@ function appStateReducer(stores) {
 
   return Object.keys(stores).reduce(function (state, key) {
     // mobx.observable() applies itself recursively by default,
-    // so all fields inside the store are observable
-    var store = mobx_18(stores[key].store);
+    // so all fields inside the model are observable
+    var model = mobx_18(stores[key].model);
     var actions = actionsReducer(stores[key].actions);
 
     state[key] = {
       getStore: getStore.bind(_this, state),
       extendObservable: mobx_12,
       action: mobx_2,
-      store: store,
+      model: model,
       actions: actions
     };
 
@@ -2862,7 +2873,7 @@ function dispatch(appState, _ref2) {
  */
 function deepPathCheck(appState, storeName, path) {
   var pathArray = path.split('.');
-  var store = appState[storeName].store;
+  var model = appState[storeName].model;
 
 
   return pathArray.reduce(function (prev, next) {
@@ -2871,7 +2882,7 @@ function deepPathCheck(appState, storeName, path) {
     if (hasNextPath) {
       return prev[next];
     }
-  }, store);
+  }, model);
 }
 
 var index = function (stores) {
@@ -2886,16 +2897,24 @@ var index = function (stores) {
   return {
     created: function created() {
       this._appState = appState;
+      this._disposers = [];
       this.dispatch = dispatch.bind(this, appState);
     },
     attached: function attached() {
       if (this.properties) {
-        addStatePathBinding(appState, this);
+        var stateBindingsDisposers = addStatePathBinding(appState, this);
+        this._disposers = this._disposers.concat(stateBindingsDisposers);
       }
 
       if (this.stateObservers) {
-        addStateObservers(appState, this);
+        var stateObserversDisposers = addStateObservers(appState, this);
+        this._disposers = this._disposers.concat(stateObserversDisposers);
       }
+    },
+    detached: function detached() {
+      this._disposers.forEach(function (disposer) {
+        return disposer();
+      });
     },
 
 

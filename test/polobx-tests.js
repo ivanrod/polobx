@@ -5,11 +5,11 @@ describe('<my-element>', () => {
   });
 
   it('has single property', () => {
-    assert(this.testElement.foo === myStore.store.foo);
+    assert(this.testElement.foo === myStore.model.foo);
   });
 
   it('has deep property', () => {
-    assert(this.testElement.deepVar === myStore.store.xxx.xx.x);
+    assert(this.testElement.deepVar === myStore.model.xxx.xx.x);
   });
 
   it('has array property', () => {
