@@ -2,7 +2,7 @@
   "name": "polobx",
   "description": "A state manager for polymer based in mobx",
   "main": "polobx.html",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "authors": [
     "Iván Rodríguez <frivanrodriguez@gmail.com>"
   ],

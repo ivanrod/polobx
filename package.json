@@ -1,6 +1,6 @@
 {
   "name": "polobx",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A state manager for polymer based in mobx",
   "main": "index.js",
   "scripts": {
