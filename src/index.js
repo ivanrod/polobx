@@ -1,7 +1,7 @@
 import { useStrict, toJS } from 'mobx';
 import { appStateReducer, addStatePathBinding, addStateObservers, deepPathCheck, dispatch } from './store.utils.js';
 
-export default function(stores) {
+export default function(stores, middlewares) {
 
   // Create app state with the provided stores
   const appState = appStateReducer(stores);
@@ -15,7 +15,7 @@ export default function(stores) {
     created() {
       this._appState = appState;
       this._disposers = [];
-      this.dispatch = dispatch.bind(this, appState);
+      this.dispatch = dispatch.bind(this, appState, middlewares);
     },
 
     attached() {

@@ -25,6 +25,12 @@ function getStore(state, storeName) {
   return fullStore;
 }
 
+function applyMiddlwares(appState, middlewares, actionObject) {
+  middlewares.forEach(middleware => {
+    middleware(appState, actionObject);
+  });
+}
+
 /**
  * Iterates through a polymer element properties to find statePath atribute
  * subscribing it to state mutations
@@ -113,7 +119,13 @@ export function appStateReducer(stores) {
  * @param  {any} payload Payload data. Optional
  * @return {Object}         Store object
  */
-export function dispatch(appState, {store, action: actionName, payload}) {
+export function dispatch(appState, middlewares, actionObject) {
+  const {store, action: actionName, payload} = actionObject;
+
+  if (middlewares) {
+    applyMiddlwares.apply(this, arguments);
+  }
+
   if (appState[store] && appState[store].actions && appState[store].actions[actionName]) {
     const storeAction = appState[store].actions[actionName];
 
