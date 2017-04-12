@@ -2,7 +2,8 @@
   "name": "polobx",
   "version": "0.2.0",
   "description": "A state manager for polymer based in mobx",
-  "main": "index.js",
+  "main": "dist/polobx.js",
+  "module": "src/index.js",
   "scripts": {
     "build": "gulp",
     "lint": "eslint ./src/**/*.js",
