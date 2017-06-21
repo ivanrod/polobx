@@ -9,20 +9,19 @@ import { autorun, observable, extendObservable, action, toJS } from 'mobx';
  */
 function actionsReducer(actions) {
   return Object.keys(actions).reduce( (prevActions, actionName) => {
-    prevActions[actionName] = action.bound(actions[actionName]);
-
-    return prevActions;
+    return {
+      ...prevActions,
+      [actionName]: action.bound(actions[actionName])
+    };
   }, {});
 }
 
 function getStore(state, storeName) {
   const { model, actions } = state[storeName];
-  const fullStore = {
+  return {
     model: toJS(model), // toJS to prevent changes in other stores?
     actions // Remove?
   };
-
-  return fullStore;
 }
 
 function applyMiddlwares(appState, middlewares, actionObject) {
@@ -99,15 +98,16 @@ export function appStateReducer(stores) {
     const model = observable(stores[key].model);
     const actions = actionsReducer(stores[key].actions);
 
-    state[key] = {
-      getStore: getStore.bind(this, state),
-      extendObservable,
-      action,
-      model,
-      actions
+    return {
+      ...state,
+      [key]: {
+        getStore: getStore.bind(this, state),
+        extendObservable,
+        action,
+        model,
+        actions
+      }
     };
-
-    return state;
   }, {});
 }
 

@@ -2728,6 +2728,10 @@ var mobx_18 = mobx.observable;
 var mobx_20 = mobx.toJS;
 var mobx_23 = mobx.useStrict;
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 
 /**
@@ -2737,9 +2741,7 @@ var mobx_23 = mobx.useStrict;
  */
 function actionsReducer(actions) {
   return Object.keys(actions).reduce(function (prevActions, actionName) {
-    prevActions[actionName] = mobx_2.bound(actions[actionName]);
-
-    return prevActions;
+    return _extends({}, prevActions, _defineProperty({}, actionName, mobx_2.bound(actions[actionName])));
   }, {});
 }
 
@@ -2748,12 +2750,16 @@ function getStore(state, storeName) {
       model = _state$storeName.model,
       actions = _state$storeName.actions;
 
-  var fullStore = {
+  return {
     model: mobx_20(model), // toJS to prevent changes in other stores?
     actions: actions // Remove?
   };
+}
 
-  return fullStore;
+function applyMiddlwares(appState, middlewares, actionObject) {
+  middlewares.forEach(function (middleware) {
+    middleware(appState, actionObject);
+  });
 }
 
 /**
@@ -2830,15 +2836,13 @@ function appStateReducer(stores) {
     var model = mobx_18(stores[key].model);
     var actions = actionsReducer(stores[key].actions);
 
-    state[key] = {
+    return _extends({}, state, _defineProperty({}, key, {
       getStore: getStore.bind(_this, state),
       extendObservable: mobx_12,
       action: mobx_2,
       model: model,
       actions: actions
-    };
-
-    return state;
+    }));
   }, {});
 }
 
@@ -2850,10 +2854,15 @@ function appStateReducer(stores) {
  * @param  {any} payload Payload data. Optional
  * @return {Object}         Store object
  */
-function dispatch(appState, _ref2) {
-  var store = _ref2.store,
-      actionName = _ref2.action,
-      payload = _ref2.payload;
+function dispatch(appState, middlewares, actionObject) {
+  var store = actionObject.store,
+      actionName = actionObject.action,
+      payload = actionObject.payload;
+
+
+  if (middlewares) {
+    applyMiddlwares.apply(this, arguments);
+  }
 
   if (appState[store] && appState[store].actions && appState[store].actions[actionName]) {
     var storeAction = appState[store].actions[actionName];
@@ -2885,7 +2894,7 @@ function deepPathCheck(appState, storeName, path) {
   }, model);
 }
 
-var index = function (stores) {
+var index = function (stores, middlewares) {
 
   // Create app state with the provided stores
   var appState = appStateReducer(stores);
@@ -2898,7 +2907,7 @@ var index = function (stores) {
     created: function created() {
       this._appState = appState;
       this._disposers = [];
-      this.dispatch = dispatch.bind(this, appState);
+      this.dispatch = dispatch.bind(this, appState, middlewares);
     },
     attached: function attached() {
       if (this.properties) {
